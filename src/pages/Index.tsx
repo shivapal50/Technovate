@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Users, Calendar, Code2, Trophy, ArrowRight, Quote, Sparkles } from "lucide-react";
+import { useState, useEffect } from "react";
 import AnimatedSection from "@/components/AnimatedSection";
 import CountdownTimer from "@/components/CountdownTimer";
 import Layout from "@/components/Layout";
@@ -9,6 +10,36 @@ import event1 from "@/assets/event-1.jpg";
 import event2 from "@/assets/event-2.jpg";
 import event3 from "@/assets/event-3.jpg";
 import event4 from "@/assets/event-4.jpg";
+
+const rotatingWords = ["Developers", "Innovators", "Builders", "Problem Solvers", "Technovate"];
+
+const RotatingText = () => {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % rotatingWords.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <span className="inline-block relative h-[1.2em] overflow-hidden align-bottom">
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={rotatingWords[index]}
+          initial={{ y: "100%", opacity: 0 }}
+          animate={{ y: "0%", opacity: 1 }}
+          exit={{ y: "-100%", opacity: 0 }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          className="inline-block"
+        >
+          {rotatingWords[index]}
+        </motion.span>
+      </AnimatePresence>
+    </span>
+  );
+};
 
 const stats = [
   { icon: Users, value: "500+", label: "Active Members" },
@@ -68,7 +99,7 @@ const Index = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-xs font-medium text-primary mb-6">
-              <Sparkles size={14} /> Powering Innovation
+              <Sparkles size={14} /> The Coding Club of Our College
             </span>
           </motion.div>
 
@@ -78,9 +109,11 @@ const Index = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6"
           >
-            Empowering Student
+            We Are
             <br />
-            <span className="text-gradient">Developers & Innovators</span>
+            <span className="text-gradient">
+              <RotatingText />
+            </span>
           </motion.h1>
 
           <motion.p
@@ -89,7 +122,7 @@ const Index = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10"
           >
-            Explore Web3, AI, and cutting-edge technologies. Build projects, win hackathons, and shape the future of innovation together.
+            A community of passionate coders building real projects, winning hackathons, and growing together.
           </motion.p>
 
           <motion.div
