@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Users, Calendar, Code2, Trophy, ArrowRight, Quote, Sparkles } from "lucide-react";
+import { useState, useEffect } from "react";
 import AnimatedSection from "@/components/AnimatedSection";
 import CountdownTimer from "@/components/CountdownTimer";
 import Layout from "@/components/Layout";
@@ -9,6 +10,36 @@ import event1 from "@/assets/event-1.jpg";
 import event2 from "@/assets/event-2.jpg";
 import event3 from "@/assets/event-3.jpg";
 import event4 from "@/assets/event-4.jpg";
+
+const rotatingWords = ["Developers", "Innovators", "Builders", "Problem Solvers", "Technovate"];
+
+const RotatingText = () => {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setIndex((prev) => (prev + 1) % rotatingWords.length);
+    }, 2500);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <span className="inline-block relative h-[1.2em] overflow-hidden align-bottom">
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={rotatingWords[index]}
+          initial={{ y: "100%", opacity: 0 }}
+          animate={{ y: "0%", opacity: 1 }}
+          exit={{ y: "-100%", opacity: 0 }}
+          transition={{ duration: 0.5, ease: "easeInOut" }}
+          className="inline-block"
+        >
+          {rotatingWords[index]}
+        </motion.span>
+      </AnimatePresence>
+    </span>
+  );
+};
 
 const stats = [
   { icon: Users, value: "500+", label: "Active Members" },
