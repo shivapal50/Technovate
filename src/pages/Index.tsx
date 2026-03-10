@@ -68,7 +68,7 @@ const Index = () => {
             transition={{ duration: 0.8, delay: 0.2 }}
           >
             <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass text-xs font-medium text-primary mb-6">
-              <Sparkles size={14} /> Powering Innovation
+              <Sparkles size={14} /> The Coding Club of Our College
             </span>
           </motion.div>
 
@@ -78,9 +78,11 @@ const Index = () => {
             transition={{ duration: 0.8, delay: 0.4 }}
             className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6"
           >
-            Empowering Student
+            We Are
             <br />
-            <span className="text-gradient">Developers & Innovators</span>
+            <span className="text-gradient">
+              <RotatingText />
+            </span>
           </motion.h1>
 
           <motion.p
@@ -89,7 +91,7 @@ const Index = () => {
             transition={{ duration: 0.8, delay: 0.6 }}
             className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10"
           >
-            Explore Web3, AI, and cutting-edge technologies. Build projects, win hackathons, and shape the future of innovation together.
+            A community of passionate coders building real projects, winning hackathons, and growing together.
           </motion.p>
 
           <motion.div
