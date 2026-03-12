@@ -41,13 +41,10 @@ const pastEvents = [
 
 // ─── Registration Form ────────────────────────────────────────────────────────
 
-const INDUSTRIES = ["Technology", "Healthcare", "Finance", "Education", "Legal", "Engineering", "Design & Creative", "Other"];
-const EXPERIENCE = ["0–1 year", "1–3 years", "3–5 years", "5–10 years", "10+ years"];
-
 const emptyForm = {
   fname: "", lname: "", email: "", phone: "",
-  jobtitle: "", industry: "", org: "", experience: "",
-  summary: "", password: "", confirm: "",
+  teamname: "", teammember: "", org: "",
+  password: "", confirm: "",
 };
 
 function RegistrationModal({ eventTitle, onClose }: { eventTitle: string; onClose: () => void }) {
@@ -64,8 +61,8 @@ function RegistrationModal({ eventTitle, onClose }: { eventTitle: string; onClos
     const errs: Record<string, string> = {};
     if (!formData.fname.trim()) errs.fname = "Required";
     if (!formData.email.includes("@")) errs.email = "Valid email required";
-    if (!formData.jobtitle.trim()) errs.jobtitle = "Required";
-    if (!formData.industry) errs.industry = "Required";
+    if (!formData.teamname.trim()) errs.teamname = "Required";
+    if (!formData.teammember.trim()) errs.teammember = "Required";
     if (formData.password.length < 8) errs.password = "Min 8 characters";
     if (formData.password !== formData.confirm) errs.confirm = "Passwords don't match";
     return errs;
@@ -129,24 +126,12 @@ function RegistrationModal({ eventTitle, onClose }: { eventTitle: string; onClos
               <Field label="Phone" name="phone" type="tel" placeholder="+91 98765 43210" value={formData.phone} onChange={handleChange} />
             </div>
 
-            {/* Professional Details */}
-            <SectionDivider label="Professional Details" />
+            {/* Team Details */}
+            <SectionDivider label="Team Details" />
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Job Title" name="jobtitle" placeholder="Software Engineer" value={formData.jobtitle} onChange={handleChange} error={errors.jobtitle} />
-              <SelectField label="Industry" name="industry" options={INDUSTRIES} value={formData.industry} onChange={handleChange} error={errors.industry} />
+              <Field label="Team Name" name="teamname" placeholder="e.g. ByteBusters" value={formData.teamname} onChange={handleChange} error={errors.teamname} />
+              <Field label="Team Members" name="teammember" placeholder="e.g. 4 members" value={formData.teammember} onChange={handleChange} error={errors.teammember} />
               <Field label="Organization" name="org" placeholder="Company / Institute" value={formData.org} onChange={handleChange} />
-              <SelectField label="Experience" name="experience" options={EXPERIENCE} value={formData.experience} onChange={handleChange} />
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-xs font-mono text-secondary uppercase tracking-widest">Professional Summary</label>
-              <textarea
-                name="summary"
-                value={formData.summary}
-                onChange={handleChange}
-                placeholder="Brief overview of your expertise and goals..."
-                rows={3}
-                className="w-full px-4 py-2.5 rounded-lg bg-white/5 border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/30 resize-none transition-colors"
-              />
             </div>
 
             {/* Account Setup */}
