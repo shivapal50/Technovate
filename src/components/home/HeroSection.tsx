@@ -68,7 +68,7 @@ const HeroSection = () => {
           <br />
           Builds{" "}
           <span className="relative inline-block">
-            <span className="absolute -inset-x-3 -inset-y-1 border-2 border-secondary/70 rounded-md" />
+            <span className=" absolute -inset-x-3 -inset-y-1 border-2 border-secondary/70 rounded-md mt-2" />
             <AnimatePresence mode="wait">
               <motion.span
                 key={rotatingWords[index]}
