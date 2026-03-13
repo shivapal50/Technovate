@@ -1,9 +1,5 @@
 import { useState } from "react";
-<<<<<<< HEAD
 import { Calendar, Clock, ArrowRight, X, Plus, Trash2 } from "lucide-react";
-=======
-import { Calendar, Clock, ArrowRight, X } from "lucide-react";
->>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
 import AnimatedSection from "@/components/AnimatedSection";
 import CountdownTimer from "@/components/CountdownTimer";
 import Layout from "@/components/Layout";
@@ -11,6 +7,8 @@ import event1 from "@/assets/event-1.jpg";
 import event2 from "@/assets/event-2.jpg";
 import event3 from "@/assets/event-3.jpg";
 import event4 from "@/assets/event-4.jpg";
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
 
 const upcomingEvents = [
   {
@@ -43,113 +41,126 @@ const pastEvents = [
   { title: "Open Source Day", description: "A day dedicated to contributing to open source projects and learning Git workflows.", image: event4 },
 ];
 
-<<<<<<< HEAD
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface TeamMember {
+type TeamMember = {
   id: number;
   name: string;
   email: string;
   role: string;
-}
+};
 
-interface FormData {
+type LeaderForm = {
   fname: string;
   lname: string;
   email: string;
   phone: string;
   teamname: string;
   org: string;
-}
+};
+
+// ─── Small Reusable Components (defined BEFORE they are used) ─────────────────
+
+const SectionDivider = ({ label }: { label: string }) => (
+  <div className="flex items-center gap-3 my-1">
+    <span className="text-xs font-mono text-secondary uppercase tracking-widest whitespace-nowrap">
+      {label}
+    </span>
+    <div className="flex-1 h-px bg-border" />
+  </div>
+);
+
+type FieldProps = {
+  label: string;
+  name: string;
+  type?: string;
+  placeholder?: string;
+  value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  error?: string;
+  className?: string;
+};
+
+const Field = ({ label, name, type = "text", placeholder, value, onChange, error, className = "" }: FieldProps) => (
+  <div className={`flex flex-col gap-1 ${className}`}>
+    <label className="text-xs font-mono text-secondary uppercase tracking-widest">
+      {label}
+    </label>
+    <input
+      type={type}
+      name={name}
+      value={value}
+      placeholder={placeholder}
+      onChange={onChange}
+      className={`px-4 py-2.5 rounded-lg bg-white/5 border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/30 transition-colors ${
+        error ? "border-red-500/70" : "border-border"
+      }`}
+    />
+    {error && <span className="text-xs text-red-400 mt-0.5">{error}</span>}
+  </div>
+);
 
 // ─── Registration Modal ───────────────────────────────────────────────────────
 
-let memberIdCounter = 1;
+let _idCounter = 1;
+const newMember = (): TeamMember => ({ id: _idCounter++, name: "", email: "", role: "" });
 
-function RegistrationModal({ eventTitle, onClose }: { eventTitle: string; onClose: () => void }) {
-  const [formData, setFormData] = useState<FormData>({
-    fname: "", lname: "", email: "", phone: "",
-    teamname: "", org: "",
-  });
-  const [members, setMembers] = useState<TeamMember[]>([
-    { id: memberIdCounter++, name: "", email: "", role: "" },
-  ]);
+const emptyLeader: LeaderForm = { fname: "", lname: "", email: "", phone: "", teamname: "", org: "" };
+
+function RegistrationModal({
+  eventTitle,
+  onClose,
+}: {
+  eventTitle: string;
+  onClose: () => void;
+}) {
+  const [leader, setLeader] = useState<LeaderForm>(emptyLeader);
+  const [members, setMembers] = useState<TeamMember[]>([newMember()]);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-=======
-// ─── Registration Form ────────────────────────────────────────────────────────
-
-const emptyForm = {
-  fname: "", lname: "", email: "", phone: "",
-  teamname: "", teammember: "", org: "",
-  password: "", confirm: "",
-};
-
-function RegistrationModal({ eventTitle, onClose }: { eventTitle: string; onClose: () => void }) {
-  const [formData, setFormData] = useState(emptyForm);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [submitted, setSubmitted] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
->>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" });
+  // Leader field change
+  const onLeaderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setLeader((prev) => ({ ...prev, [name]: value }));
+    setErrors((prev) => ({ ...prev, [name]: "" }));
   };
 
-<<<<<<< HEAD
-  const handleMemberChange = (id: number, field: keyof Omit<TeamMember, "id">, value: string) => {
-    setMembers(members.map(m => m.id === id ? { ...m, [field]: value } : m));
-    setErrors({ ...errors, [`member-${id}-${field}`]: "" });
+  // Member field change
+  const onMemberChange = (id: number, field: keyof Omit<TeamMember, "id">, value: string) => {
+    setMembers((prev) => prev.map((m) => (m.id === id ? { ...m, [field]: value } : m)));
+    setErrors((prev) => ({ ...prev, [`m-${id}-${field}`]: "" }));
   };
 
-  const addMember = () => {
-    setMembers([...members, { id: memberIdCounter++, name: "", email: "", role: "" }]);
-  };
+  const addMember = () => setMembers((prev) => [...prev, newMember()]);
 
   const removeMember = (id: number) => {
-    if (members.length === 1) return;
-    setMembers(members.filter(m => m.id !== id));
+    if (members.length <= 1) return;
+    setMembers((prev) => prev.filter((m) => m.id !== id));
   };
 
-=======
->>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
-  const validate = () => {
+  const validate = (): Record<string, string> => {
     const errs: Record<string, string> = {};
-    if (!formData.fname.trim()) errs.fname = "Required";
-    if (!formData.email.includes("@")) errs.email = "Valid email required";
-    if (!formData.teamname.trim()) errs.teamname = "Required";
-<<<<<<< HEAD
-    members.forEach(m => {
-      if (!m.name.trim()) errs[`member-${m.id}-name`] = "Required";
-      if (m.email && !m.email.includes("@")) errs[`member-${m.id}-email`] = "Valid email";
+    if (!leader.fname.trim()) errs.fname = "Required";
+    if (!leader.email.trim() || !leader.email.includes("@")) errs.email = "Valid email required";
+    if (!leader.teamname.trim()) errs.teamname = "Required";
+    members.forEach((m) => {
+      if (!m.name.trim()) errs[`m-${m.id}-name`] = "Required";
+      if (m.email && !m.email.includes("@")) errs[`m-${m.id}-email`] = "Valid email";
     });
-=======
-    if (!formData.teammember.trim()) errs.teammember = "Required";
-    if (formData.password.length < 8) errs.password = "Min 8 characters";
-    if (formData.password !== formData.confirm) errs.confirm = "Passwords don't match";
->>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
     return errs;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const errs = validate();
-    if (Object.keys(errs).length) { setErrors(errs); return; }
-<<<<<<< HEAD
-    console.log({ event: eventTitle, ...formData, members });
+    if (Object.keys(errs).length > 0) {
+      setErrors(errs);
+      return;
+    }
+    console.log({ event: eventTitle, leader, members });
     setSubmitted(true);
   };
-
-=======
-    console.log({ event: eventTitle, ...formData });
-    setSubmitted(true);
-  };
-
-  // Prevent background scroll when modal open
->>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
-  const stopProp = (e: React.MouseEvent) => e.stopPropagation();
 
   return (
     <div
@@ -158,16 +169,19 @@ function RegistrationModal({ eventTitle, onClose }: { eventTitle: string; onClos
       onClick={onClose}
     >
       <div
-        className="glass rounded-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto relative"
-        onClick={stopProp}
+        className="glass rounded-2xl w-full max-w-xl max-h-[90vh] overflow-y-auto"
+        onClick={(e) => e.stopPropagation()}
       >
-        {/* Header */}
-        <div className="flex items-start justify-between p-6 pb-0">
+        {/* Modal Header */}
+        <div className="flex items-start justify-between p-6 pb-2">
           <div>
-            <span className="text-xs font-mono text-secondary uppercase tracking-widest">Register Now</span>
+            <span className="text-xs font-mono text-secondary uppercase tracking-widest">
+              Register Now
+            </span>
             <h2 className="text-2xl font-bold mt-1">{eventTitle}</h2>
           </div>
           <button
+            type="button"
             onClick={onClose}
             className="p-2 rounded-lg hover:bg-white/10 transition-colors text-muted-foreground hover:text-foreground"
           >
@@ -175,54 +189,64 @@ function RegistrationModal({ eventTitle, onClose }: { eventTitle: string; onClos
           </button>
         </div>
 
+        {/* Success State */}
         {submitted ? (
           <div className="p-8 text-center">
             <div className="text-5xl mb-4">🎉</div>
             <h3 className="text-xl font-bold mb-2">Registration Successful!</h3>
-<<<<<<< HEAD
             <p className="text-muted-foreground mb-2">
-              <span className="text-foreground font-semibold">{formData.teamname}</span> is registered for{" "}
+              <span className="text-foreground font-semibold">{leader.teamname}</span> is now
+              registered for{" "}
               <span className="text-foreground font-semibold">{eventTitle}</span>.
             </p>
             <p className="text-muted-foreground mb-6">
-              Details will be sent to <span className="text-secondary">{formData.email}</span>.
+              Details will be sent to{" "}
+              <span className="text-secondary">{leader.email}</span>.
             </p>
             <button
+              type="button"
               onClick={onClose}
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold hover:scale-105 transition-transform text-sm"
             >
-=======
-            <p className="text-muted-foreground mb-6">
-              You're registered for <span className="text-foreground font-semibold">{eventTitle}</span>. We'll send details to <span className="text-secondary">{formData.email}</span>.
-            </p>
-            <button onClick={onClose} className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold hover:scale-105 transition-transform text-sm">
->>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
               Close <ArrowRight size={14} />
             </button>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="p-6 space-y-5">
+          /* Form */
+          <form onSubmit={handleSubmit} className="p-6 space-y-4">
 
-<<<<<<< HEAD
             {/* Leader Info */}
             <SectionDivider label="Leader Information" />
-=======
-            {/* Personal Info */}
-            <SectionDivider label="Personal Information" />
->>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
-            <div className="grid grid-cols-2 gap-4">
-              <Field label="First Name" name="fname" placeholder="Arjun" value={formData.fname} onChange={handleChange} error={errors.fname} />
-              <Field label="Last Name" name="lname" placeholder="Sharma" value={formData.lname} onChange={handleChange} />
-              <Field label="Email" name="email" type="email" placeholder="you@example.com" value={formData.email} onChange={handleChange} error={errors.email} />
-              <Field label="Phone" name="phone" type="tel" placeholder="+91 98765 43210" value={formData.phone} onChange={handleChange} />
+            <div className="grid grid-cols-2 gap-3">
+              <Field
+                label="First Name" name="fname" placeholder="Arjun"
+                value={leader.fname} onChange={onLeaderChange} error={errors.fname}
+              />
+              <Field
+                label="Last Name" name="lname" placeholder="Sharma"
+                value={leader.lname} onChange={onLeaderChange}
+              />
+              <Field
+                label="Email" name="email" type="email" placeholder="you@example.com"
+                value={leader.email} onChange={onLeaderChange} error={errors.email}
+              />
+              <Field
+                label="Phone" name="phone" type="tel" placeholder="+91 98765 43210"
+                value={leader.phone} onChange={onLeaderChange}
+              />
             </div>
 
-<<<<<<< HEAD
             {/* Team Info */}
             <SectionDivider label="Team Details" />
-            <div className="grid grid-cols-2 gap-4">
-              <Field label="Team Name" name="teamname" placeholder="e.g. ByteBusters" value={formData.teamname} onChange={handleChange} error={errors.teamname} />
-              <Field label="Organization" name="org" placeholder="College / Company" value={formData.org} onChange={handleChange} />
+            <div className="grid grid-cols-2 gap-3">
+              <Field
+                label="Team Name" name="teamname" placeholder="e.g. ByteBusters"
+                value={leader.teamname} onChange={onLeaderChange} error={errors.teamname}
+              />
+              <Field
+                label="Organization" name="org" placeholder="College / Company"
+                value={leader.org} onChange={onLeaderChange}
+              />
             </div>
 
             {/* Dynamic Team Members */}
@@ -232,9 +256,10 @@ function RegistrationModal({ eventTitle, onClose }: { eventTitle: string; onClos
               {members.map((member, index) => (
                 <div
                   key={member.id}
-                  className="rounded-xl border border-border bg-white/5 p-4 space-y-3"
+                  className="rounded-xl border border-border bg-white/5 p-4"
                 >
-                  <div className="flex items-center justify-between">
+                  {/* Member card header */}
+                  <div className="flex items-center justify-between mb-3">
                     <span className="text-xs font-mono text-secondary uppercase tracking-widest">
                       Member {index + 1}
                     </span>
@@ -242,73 +267,51 @@ function RegistrationModal({ eventTitle, onClose }: { eventTitle: string; onClos
                       <button
                         type="button"
                         onClick={() => removeMember(member.id)}
-                        className="p-1 rounded-md hover:bg-red-500/10 text-muted-foreground hover:text-red-400 transition-colors"
+                        className="p-1.5 rounded-md hover:bg-red-500/10 text-muted-foreground hover:text-red-400 transition-colors"
                       >
                         <Trash2 size={14} />
                       </button>
                     )}
                   </div>
 
+                  {/* Member fields */}
                   <div className="grid grid-cols-2 gap-3">
                     <Field
-                      label="Name"
-                      name={`member-${member.id}-name`}
-                      placeholder="Full name"
+                      label="Name" name={`m-${member.id}-name`} placeholder="Full name"
                       value={member.name}
-                      onChange={(e) => handleMemberChange(member.id, "name", e.target.value)}
-                      error={errors[`member-${member.id}-name`]}
+                      onChange={(e) => onMemberChange(member.id, "name", e.target.value)}
+                      error={errors[`m-${member.id}-name`]}
                     />
                     <Field
-                      label="Role"
-                      name={`member-${member.id}-role`}
-                      placeholder="e.g. Frontend Dev"
+                      label="Role" name={`m-${member.id}-role`} placeholder="e.g. Frontend Dev"
                       value={member.role}
-                      onChange={(e) => handleMemberChange(member.id, "role", e.target.value)}
+                      onChange={(e) => onMemberChange(member.id, "role", e.target.value)}
                     />
-                    <div className="col-span-2">
-                      <Field
-                        label="Email"
-                        name={`member-${member.id}-email`}
-                        type="email"
-                        placeholder="member@example.com"
-                        value={member.email}
-                        onChange={(e) => handleMemberChange(member.id, "email", e.target.value)}
-                        error={errors[`member-${member.id}-email`]}
-                      />
-                    </div>
+                    <Field
+                      label="Email" name={`m-${member.id}-email`} type="email"
+                      placeholder="member@example.com"
+                      value={member.email}
+                      onChange={(e) => onMemberChange(member.id, "email", e.target.value)}
+                      error={errors[`m-${member.id}-email`]}
+                      className="col-span-2"
+                    />
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Add Member */}
+            {/* Add Member Button */}
             <button
               type="button"
               onClick={addMember}
               className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl border border-dashed border-border text-sm text-muted-foreground hover:text-foreground hover:border-secondary hover:bg-white/5 transition-all"
             >
-              <Plus size={15} /> Add Another Member
+              <Plus size={15} />
+              Add Another Member
             </button>
 
-=======
-            {/* Team Details */}
-            <SectionDivider label="Team Details" />
-            <div className="grid grid-cols-2 gap-4">
-              <Field label="Team Name" name="teamname" placeholder="e.g. ByteBusters" value={formData.teamname} onChange={handleChange} error={errors.teamname} />
-              <Field label="Team Members" name="teammember" placeholder="e.g. 4 members" value={formData.teammember} onChange={handleChange} error={errors.teammember} />
-              <Field label="Organization" name="org" placeholder="Company / Institute" value={formData.org} onChange={handleChange} />
-            </div>
-
-            {/* Account Setup */}
-            <SectionDivider label="Account Setup" />
-            <div className="grid grid-cols-2 gap-4">
-              <Field label="Password" name="password" type="password" placeholder="Min 8 characters" value={formData.password} onChange={handleChange} error={errors.password} />
-              <Field label="Confirm Password" name="confirm" type="password" placeholder="Repeat password" value={formData.confirm} onChange={handleChange} error={errors.confirm} />
-            </div>
-
->>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
-            {/* Actions */}
-            <div className="flex justify-end gap-3 pt-2">
+            {/* Form Actions */}
+            <div className="flex justify-end gap-3 pt-1">
               <button
                 type="button"
                 onClick={onClose}
@@ -330,67 +333,7 @@ function RegistrationModal({ eventTitle, onClose }: { eventTitle: string; onClos
   );
 }
 
-// ─── Reusable sub-components ──────────────────────────────────────────────────
-
-const SectionDivider = ({ label }: { label: string }) => (
-  <div className="flex items-center gap-3">
-    <span className="text-xs font-mono text-secondary uppercase tracking-widest whitespace-nowrap">{label}</span>
-    <div className="flex-1 h-px bg-border" />
-  </div>
-);
-
-interface FieldProps {
-<<<<<<< HEAD
-  label: string;
-  name: string;
-  type?: string;
-  placeholder?: string;
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  error?: string;
-}
-
-=======
-  label: string; name: string; type?: string;
-  placeholder?: string; value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  error?: string;
-}
->>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
-const Field = ({ label, name, type = "text", placeholder, value, onChange, error }: FieldProps) => (
-  <div className="flex flex-col gap-1">
-    <label className="text-xs font-mono text-secondary uppercase tracking-widest">{label}</label>
-    <input
-      type={type} name={name} value={value} placeholder={placeholder} onChange={onChange}
-      className={`px-4 py-2.5 rounded-lg bg-white/5 border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/30 transition-colors ${error ? "border-red-500/70" : "border-border"}`}
-    />
-    {error && <span className="text-xs text-red-400">{error}</span>}
-  </div>
-);
-
-<<<<<<< HEAD
-=======
-interface SelectFieldProps {
-  label: string; name: string; options: string[];
-  value: string; onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
-  error?: string;
-}
-const SelectField = ({ label, name, options, value, onChange, error }: SelectFieldProps) => (
-  <div className="flex flex-col gap-1">
-    <label className="text-xs font-mono text-secondary uppercase tracking-widest">{label}</label>
-    <select
-      name={name} value={value} onChange={onChange}
-      className={`px-4 py-2.5 rounded-lg bg-white/5 border text-sm text-foreground focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/30 transition-colors ${error ? "border-red-500/70" : "border-border"}`}
-    >
-      <option value="">Select...</option>
-      {options.map(o => <option key={o} value={o}>{o}</option>)}
-    </select>
-    {error && <span className="text-xs text-red-400">{error}</span>}
-  </div>
-);
-
->>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
-// ─── Main Page ────────────────────────────────────────────────────────────────
+// ─── Events Page ──────────────────────────────────────────────────────────────
 
 const Events = () => {
   const [activeEvent, setActiveEvent] = useState<string | null>(null);
@@ -402,7 +345,9 @@ const Events = () => {
         <div className="absolute inset-0 grid-pattern opacity-20" />
         <div className="container mx-auto relative z-10">
           <AnimatedSection>
-            <span className="text-xs font-mono text-secondary uppercase tracking-widest">Mark Your Calendar</span>
+            <span className="text-xs font-mono text-secondary uppercase tracking-widest">
+              Mark Your Calendar
+            </span>
             <h1 className="text-4xl md:text-6xl font-bold mt-4 mb-12">
               Upcoming <span className="text-gradient">Events</span>
             </h1>
@@ -416,14 +361,19 @@ const Events = () => {
                     <div className="flex-1">
                       <h3 className="text-2xl font-bold mb-2">{event.title}</h3>
                       <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-3">
-                        <span className="flex items-center gap-1"><Calendar size={14} /> {event.date}</span>
-                        <span className="flex items-center gap-1"><Clock size={14} /> {event.time}</span>
+                        <span className="flex items-center gap-1">
+                          <Calendar size={14} /> {event.date}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Clock size={14} /> {event.time}
+                        </span>
                       </div>
                       <p className="text-muted-foreground">{event.description}</p>
                     </div>
                     <div className="flex flex-col items-start lg:items-end gap-4">
                       <CountdownTimer targetDate={event.targetDate} />
                       <button
+                        type="button"
                         onClick={() => setActiveEvent(event.title)}
                         className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold hover:scale-105 transition-transform text-sm"
                       >
@@ -446,12 +396,17 @@ const Events = () => {
               Past <span className="text-gradient">Events</span>
             </h2>
           </AnimatedSection>
+
           <div className="grid md:grid-cols-2 gap-6">
             {pastEvents.map((event, i) => (
               <AnimatedSection key={i} delay={i * 0.1}>
                 <div className="glass rounded-xl overflow-hidden group hover-glow">
                   <div className="aspect-video overflow-hidden">
-                    <img src={event.image} alt={event.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                    <img
+                      src={event.image}
+                      alt={event.title}
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
                   </div>
                   <div className="p-6">
                     <h3 className="text-lg font-bold mb-2">{event.title}</h3>
