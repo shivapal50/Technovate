@@ -1,5 +1,9 @@
 import { useState } from "react";
+<<<<<<< HEAD
 import { Calendar, Clock, ArrowRight, X, Plus, Trash2 } from "lucide-react";
+=======
+import { Calendar, Clock, ArrowRight, X } from "lucide-react";
+>>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
 import AnimatedSection from "@/components/AnimatedSection";
 import CountdownTimer from "@/components/CountdownTimer";
 import Layout from "@/components/Layout";
@@ -39,6 +43,7 @@ const pastEvents = [
   { title: "Open Source Day", description: "A day dedicated to contributing to open source projects and learning Git workflows.", image: event4 },
 ];
 
+<<<<<<< HEAD
 // ─── Types ────────────────────────────────────────────────────────────────────
 
 interface TeamMember {
@@ -73,10 +78,27 @@ function RegistrationModal({ eventTitle, onClose }: { eventTitle: string; onClos
   const [submitted, setSubmitted] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+=======
+// ─── Registration Form ────────────────────────────────────────────────────────
+
+const emptyForm = {
+  fname: "", lname: "", email: "", phone: "",
+  teamname: "", teammember: "", org: "",
+  password: "", confirm: "",
+};
+
+function RegistrationModal({ eventTitle, onClose }: { eventTitle: string; onClose: () => void }) {
+  const [formData, setFormData] = useState(emptyForm);
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+>>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
     setFormData({ ...formData, [e.target.name]: e.target.value });
     setErrors({ ...errors, [e.target.name]: "" });
   };
 
+<<<<<<< HEAD
   const handleMemberChange = (id: number, field: keyof Omit<TeamMember, "id">, value: string) => {
     setMembers(members.map(m => m.id === id ? { ...m, [field]: value } : m));
     setErrors({ ...errors, [`member-${id}-${field}`]: "" });
@@ -91,15 +113,23 @@ function RegistrationModal({ eventTitle, onClose }: { eventTitle: string; onClos
     setMembers(members.filter(m => m.id !== id));
   };
 
+=======
+>>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
   const validate = () => {
     const errs: Record<string, string> = {};
     if (!formData.fname.trim()) errs.fname = "Required";
     if (!formData.email.includes("@")) errs.email = "Valid email required";
     if (!formData.teamname.trim()) errs.teamname = "Required";
+<<<<<<< HEAD
     members.forEach(m => {
       if (!m.name.trim()) errs[`member-${m.id}-name`] = "Required";
       if (m.email && !m.email.includes("@")) errs[`member-${m.id}-email`] = "Valid email";
     });
+=======
+    if (!formData.teammember.trim()) errs.teammember = "Required";
+    if (formData.password.length < 8) errs.password = "Min 8 characters";
+    if (formData.password !== formData.confirm) errs.confirm = "Passwords don't match";
+>>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
     return errs;
   };
 
@@ -107,10 +137,18 @@ function RegistrationModal({ eventTitle, onClose }: { eventTitle: string; onClos
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length) { setErrors(errs); return; }
+<<<<<<< HEAD
     console.log({ event: eventTitle, ...formData, members });
     setSubmitted(true);
   };
 
+=======
+    console.log({ event: eventTitle, ...formData });
+    setSubmitted(true);
+  };
+
+  // Prevent background scroll when modal open
+>>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
   const stopProp = (e: React.MouseEvent) => e.stopPropagation();
 
   return (
@@ -141,6 +179,7 @@ function RegistrationModal({ eventTitle, onClose }: { eventTitle: string; onClos
           <div className="p-8 text-center">
             <div className="text-5xl mb-4">🎉</div>
             <h3 className="text-xl font-bold mb-2">Registration Successful!</h3>
+<<<<<<< HEAD
             <p className="text-muted-foreground mb-2">
               <span className="text-foreground font-semibold">{formData.teamname}</span> is registered for{" "}
               <span className="text-foreground font-semibold">{eventTitle}</span>.
@@ -152,14 +191,25 @@ function RegistrationModal({ eventTitle, onClose }: { eventTitle: string; onClos
               onClick={onClose}
               className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold hover:scale-105 transition-transform text-sm"
             >
+=======
+            <p className="text-muted-foreground mb-6">
+              You're registered for <span className="text-foreground font-semibold">{eventTitle}</span>. We'll send details to <span className="text-secondary">{formData.email}</span>.
+            </p>
+            <button onClick={onClose} className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold hover:scale-105 transition-transform text-sm">
+>>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
               Close <ArrowRight size={14} />
             </button>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="p-6 space-y-5">
 
+<<<<<<< HEAD
             {/* Leader Info */}
             <SectionDivider label="Leader Information" />
+=======
+            {/* Personal Info */}
+            <SectionDivider label="Personal Information" />
+>>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
             <div className="grid grid-cols-2 gap-4">
               <Field label="First Name" name="fname" placeholder="Arjun" value={formData.fname} onChange={handleChange} error={errors.fname} />
               <Field label="Last Name" name="lname" placeholder="Sharma" value={formData.lname} onChange={handleChange} />
@@ -167,6 +217,7 @@ function RegistrationModal({ eventTitle, onClose }: { eventTitle: string; onClos
               <Field label="Phone" name="phone" type="tel" placeholder="+91 98765 43210" value={formData.phone} onChange={handleChange} />
             </div>
 
+<<<<<<< HEAD
             {/* Team Info */}
             <SectionDivider label="Team Details" />
             <div className="grid grid-cols-2 gap-4">
@@ -239,6 +290,23 @@ function RegistrationModal({ eventTitle, onClose }: { eventTitle: string; onClos
               <Plus size={15} /> Add Another Member
             </button>
 
+=======
+            {/* Team Details */}
+            <SectionDivider label="Team Details" />
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Team Name" name="teamname" placeholder="e.g. ByteBusters" value={formData.teamname} onChange={handleChange} error={errors.teamname} />
+              <Field label="Team Members" name="teammember" placeholder="e.g. 4 members" value={formData.teammember} onChange={handleChange} error={errors.teammember} />
+              <Field label="Organization" name="org" placeholder="Company / Institute" value={formData.org} onChange={handleChange} />
+            </div>
+
+            {/* Account Setup */}
+            <SectionDivider label="Account Setup" />
+            <div className="grid grid-cols-2 gap-4">
+              <Field label="Password" name="password" type="password" placeholder="Min 8 characters" value={formData.password} onChange={handleChange} error={errors.password} />
+              <Field label="Confirm Password" name="confirm" type="password" placeholder="Repeat password" value={formData.confirm} onChange={handleChange} error={errors.confirm} />
+            </div>
+
+>>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
             {/* Actions */}
             <div className="flex justify-end gap-3 pt-2">
               <button
@@ -272,6 +340,7 @@ const SectionDivider = ({ label }: { label: string }) => (
 );
 
 interface FieldProps {
+<<<<<<< HEAD
   label: string;
   name: string;
   type?: string;
@@ -281,6 +350,13 @@ interface FieldProps {
   error?: string;
 }
 
+=======
+  label: string; name: string; type?: string;
+  placeholder?: string; value: string;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  error?: string;
+}
+>>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
 const Field = ({ label, name, type = "text", placeholder, value, onChange, error }: FieldProps) => (
   <div className="flex flex-col gap-1">
     <label className="text-xs font-mono text-secondary uppercase tracking-widest">{label}</label>
@@ -292,6 +368,28 @@ const Field = ({ label, name, type = "text", placeholder, value, onChange, error
   </div>
 );
 
+<<<<<<< HEAD
+=======
+interface SelectFieldProps {
+  label: string; name: string; options: string[];
+  value: string; onChange: (e: React.ChangeEvent<HTMLSelectElement>) => void;
+  error?: string;
+}
+const SelectField = ({ label, name, options, value, onChange, error }: SelectFieldProps) => (
+  <div className="flex flex-col gap-1">
+    <label className="text-xs font-mono text-secondary uppercase tracking-widest">{label}</label>
+    <select
+      name={name} value={value} onChange={onChange}
+      className={`px-4 py-2.5 rounded-lg bg-white/5 border text-sm text-foreground focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary/30 transition-colors ${error ? "border-red-500/70" : "border-border"}`}
+    >
+      <option value="">Select...</option>
+      {options.map(o => <option key={o} value={o}>{o}</option>)}
+    </select>
+    {error && <span className="text-xs text-red-400">{error}</span>}
+  </div>
+);
+
+>>>>>>> 23d55f549587decbdd933ecc7f3f2b35226b6e1a
 // ─── Main Page ────────────────────────────────────────────────────────────────
 
 const Events = () => {
